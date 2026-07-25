@@ -1254,15 +1254,20 @@
           description: 'Atelier Dawat — ' + (s.brideLatin||'') + ' & ' + (s.groomLatin||'')
         })
       });
-      if(!res.ok) throw new Error('http_' + res.status);
-      const data = await res.json();
-      if(!data.checkout_url || !data.id) throw new Error('bad_response');
+      let data = null;
+      try{ data = await res.json(); }catch(parseErr){ /* non-JSON response */ }
+
+      if(!res.ok){
+        const detail = data ? (data.message || data.error || JSON.stringify(data.details || data)) : ('HTTP ' + res.status);
+        throw new Error(detail);
+      }
+      if(!data || !data.checkout_url || !data.id) throw new Error('bad_response: ' + JSON.stringify(data));
 
       // Keep the checkout id so we can verify payment status server-side on return.
       sessionStorage.setItem('chargilyCheckoutId', data.id);
       location.href = data.checkout_url;
     }catch(err){
-      setPayError(UI[uiLang].payFailedCreate);
+      setPayError(UI[uiLang].payFailedCreate + ' — [' + (err && err.message ? err.message : err) + ']');
       btn.removeAttribute('disabled');
       btn.textContent = originalLabel;
     }
