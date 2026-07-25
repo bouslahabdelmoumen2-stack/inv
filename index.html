@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Atelier Dawat — Luxury Digital Invitation Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital@0;1&family=Cairo:wght@300;400;500;600;700&family=Jost:wght@300;400;500;600&family=Allura&display=swap" rel="stylesheet">
+<style>
+  /* ============ DESIGN TOKENS ============ */
+  :root{
+    --void:#161210;
+    --card:#1F1916;
+    --card-2:#241d19;
+    --panel:#161210;
+    --gold:#D4AF37;
+    --gold-soft:#E5C158;
+    --gold-deep:#8c6d1f;
+    --gold-line:rgba(212,175,55,0.28);
+    --ivory:#f3ecda;
+    --muted:#96907c;
+    --muted-dim:#5f5a4c;
+    --err:#c7623e;
+    --burgundy:#241110;
+
+    --font-display:'Playfair Display', serif;
+    --font-script:'Cormorant Garamond', serif;
+    --font-ar-display:'Aref Ruqaa', serif;
+    --font-ar-alt:'Amiri', serif;
+    --font-ar-body:'Cairo', sans-serif;
+    --font-ui:'Jost', sans-serif;
+    --font-allura:'Allura', cursive;
+
+    --wine:#7a1130;
+    --wine-deep:#4a0a1e;
+    --wine-line:rgba(245,225,200,0.28);
+    --cream:#f7ede0;
+    --cream-line:rgba(122,17,48,0.22);
+
+    --radius:2px;
+    --shadow-card: 0 30px 80px -20px rgba(0,0,0,0.65);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(212,175,55,0.06), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, rgba(212,175,55,0.05), transparent 55%),
+      var(--void);
+    color:var(--ivory);
+    font-family:var(--font-ui);
+    -webkit-font-smoothing:antialiased;
+    min-height:100%;
+  }
+  body[dir="rtl"]{ font-family:var(--font-ar-body); }
+
+  ::selection{ background:var(--gold); color:#141210; }
+
+  a{ color:inherit; }
+  button{ font-family:inherit; cursor:pointer; }
+  input, select, textarea{ font-family:inherit; }
+
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-track{ background:var(--void); }
+  ::-webkit-scrollbar-thumb{ background:var(--gold-deep); border-radius:4px; }
+
+  /* ============ TOP BAR ============ */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px clamp(18px,4vw,48px);
+    border-bottom:1px solid var(--gold-line);
+    background:linear-gradient(180deg, rgba(212,175,55,0.04), transparent);
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{
+    width:34px; height:34px; border:1px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); color:var(--gold); font-size:16px;
+    transform:rotate(45deg); flex:none;
+  }
+  .brand-mark span{ transform:rotate(-45deg); }
+  .brand-name{ font-family:var(--font-display); letter-spacing:0.12em; font-size:15px; color:var(--ivory); }
+  .brand-sub{ font-family:var(--font-ui); font-size:10.5px; letter-spacing:0.18em; color:var(--muted); text-transform:uppercase; margin-top:2px; }
+
+  .lang-switch{ display:flex; gap:6px; }
+  .lang-switch button{
+    background:transparent; border:1px solid var(--gold-line); color:var(--muted);
+    padding:7px 12px; font-size:11.5px; letter-spacing:0.08em; border-radius:var(--radius);
+    transition:all .2s;
+  }
+  .lang-switch button.active, .lang-switch button:hover{ color:var(--gold); border-color:var(--gold); }
+
+  /* ============ LAYOUT ============ */
+  #builderView{ padding:clamp(18px,4vw,48px); }
+  .app-grid{
+    display:grid; grid-template-columns:minmax(320px,460px) 1fr;
+    gap:clamp(20px,3vw,40px);
+    max-width:1400px; margin:0 auto;
+    align-items:start;
+  }
+  @media (max-width:980px){ .app-grid{ grid-template-columns:1fr; } }
+
+  .hero-line{ max-width:1400px; margin:0 auto 28px; padding:0 clamp(18px,4vw,48px); }
+  .hero-line h1{ font-family:var(--font-display); font-weight:500; font-size:clamp(26px,3.4vw,40px); margin:0 0 8px; letter-spacing:0.01em; }
+  .hero-line h1 em{ font-style:italic; color:var(--gold); font-family:var(--font-script); font-size:1.12em; }
+  .hero-line p{ margin:0; color:var(--muted); font-size:14px; max-width:640px; line-height:1.7; }
+
+  /* ============ FORM PANEL ============ */
+  .panel{ background:linear-gradient(180deg, var(--card), var(--panel)); border:1px solid var(--gold-line); border-radius:var(--radius); padding:clamp(20px,3vw,32px); }
+  .section-block{ margin-bottom:30px; }
+  .section-block:last-child{ margin-bottom:0; }
+  .section-label{ display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-style:italic; font-size:13px; color:var(--gold-soft); letter-spacing:0.03em; margin-bottom:16px; }
+  .section-label::after{ content:""; flex:1; height:1px; background:var(--gold-line); }
+
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:420px){ .field-row{ grid-template-columns:1fr; } }
+
+  .field input[type=text], .field input[type=url], .field input[type=tel],
+  .field input[type=datetime-local], .field select, .field textarea{
+    width:100%; background:var(--void); border:1px solid rgba(212,175,55,0.22);
+    color:var(--ivory); padding:11px 12px; border-radius:var(--radius);
+    font-size:14px; outline:none; transition:border-color .2s, box-shadow .2s;
+  }
+  .field textarea{ resize:vertical; min-height:64px; font-family:inherit; }
+  .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--gold); box-shadow:0 0 0 3px rgba(212,175,55,0.12); }
+  .field input.invalid{ border-color:var(--err); }
+  .field-error{ font-size:11px; color:var(--err); margin-top:5px; display:none; }
+  .field-error.show{ display:block; }
+  .field-hint{ font-size:10.5px; color:var(--muted-dim); margin-top:6px; line-height:1.6; }
+
+  .field select{ appearance:none; -webkit-appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0L5 6L10 0' fill='none' stroke='%23D4AF37' stroke-width='1.3'/></svg>");
+    background-repeat:no-repeat; background-position: left 12px center; padding-left:30px;
+  }
+  body[dir="rtl"] .field select{ background-position: right 12px center; padding-left:12px; padding-right:30px; }
+
+  .template-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .template-card{ border:1px solid var(--gold-line); border-radius:var(--radius); padding:14px 12px; cursor:pointer; transition:all .2s; background:var(--void); }
+  .template-card:hover{ border-color:var(--gold); }
+  .template-card.active{ border-color:var(--gold); background:rgba(212,175,55,0.08); box-shadow:0 0 0 1px var(--gold) inset; }
+  .template-card .tname{ font-family:var(--font-script); font-style:italic; font-size:17px; color:var(--ivory); }
+  .template-card .tdesc{ font-size:10.5px; color:var(--muted); margin-top:4px; letter-spacing:0.03em; }
+  .template-swatch{ display:flex; gap:4px; margin-top:10px; }
+  .template-swatch i{ width:14px; height:14px; border-radius:50%; display:block; }
+
+  .pill-group{ display:flex; gap:10px; flex-wrap:wrap; }
+  .pill{ border:1px solid var(--gold-line); padding:9px 16px; border-radius:20px; font-size:12.5px; color:var(--muted); transition:all .2s; background:transparent; }
+  .pill.active{ border-color:var(--gold); color:var(--gold); background:rgba(212,175,55,0.08); }
+
+  .toggle-list{ display:flex; flex-direction:column; gap:10px; }
+  .toggle-row{ display:flex; align-items:center; justify-content:space-between; border:1px solid rgba(212,175,55,0.15); border-radius:var(--radius); padding:11px 14px; background:var(--void); }
+  .toggle-row .trow-label{ font-size:13px; color:var(--ivory); }
+  .toggle-row .trow-sub{ font-size:10.5px; color:var(--muted-dim); margin-top:2px; }
+  .switch{ position:relative; width:38px; height:21px; flex:none; }
+  .switch input{ opacity:0; width:0; height:0; position:absolute; }
+  .switch .track{ position:absolute; inset:0; background:#2c2822; border-radius:20px; transition:.2s; border:1px solid var(--gold-line); }
+  .switch .knob{ position:absolute; top:2px; left:2px; width:15px; height:15px; background:var(--muted); border-radius:50%; transition:.2s; }
+  .switch input:checked + .track{ background:rgba(212,175,55,0.25); border-color:var(--gold); }
+  .switch input:checked + .track .knob{ transform:translateX(17px); background:var(--gold); }
+  body[dir="rtl"] .switch input:checked + .track .knob{ transform:translateX(-17px); }
+
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 22px; border-radius:var(--radius); border:1px solid var(--gold); font-size:12.5px; letter-spacing:0.1em; text-transform:uppercase; font-weight:500; transition:all .2s; }
+  .btn-gold{ background:var(--gold); color:#171310; }
+  .btn-gold:hover{ background:var(--gold-soft); box-shadow:0 8px 22px -6px rgba(212,175,55,0.55); transform:translateY(-1px); }
+  .btn:active{ transform:translateY(0) scale(0.98); }
+  .btn-ghost{ background:transparent; color:var(--gold); }
+  .btn-ghost:hover{ background:rgba(212,175,55,0.1); }
+  .btn-block{ width:100%; }
+
+  .generate-box{ margin-top:8px; }
+  .pay-note{ font-size:10.5px; color:var(--muted); text-align:center; margin-top:10px; line-height:1.6; }
+  .pay-error{ display:none; margin-top:10px; border:1px solid var(--err); color:var(--err); background:rgba(199,98,62,0.08); border-radius:2px; padding:10px 12px; font-size:12px; line-height:1.7; }
+  .pay-error.show{ display:block; }
+  .pay-error a{ color:var(--gold); text-decoration:underline; }
+  #generateBtn[disabled]{ opacity:.6; cursor:not-allowed; }
+
+  .pay-overlay{
+    display:none; position:fixed; inset:0; z-index:200; background:rgba(10,9,8,0.92);
+    align-items:center; justify-content:center; backdrop-filter:blur(4px); padding:24px;
+  }
+  .pay-overlay.show{ display:flex; }
+  .pay-box{
+    text-align:center; padding:34px 28px; max-width:320px; width:100%;
+    background:linear-gradient(180deg, var(--card), var(--panel)); border:1px solid var(--gold-line); border-radius:var(--radius);
+  }
+  .pay-spinner{
+    width:38px; height:38px; margin:0 auto 18px; border-radius:50%;
+    border:2px solid var(--gold-line); border-top-color:var(--gold);
+    animation:spin 0.9s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .pay-status{ font-size:13px; color:var(--ivory); letter-spacing:0.02em; line-height:1.8; }
+  .share-result{ margin-top:16px; border:1px solid var(--gold-line); border-radius:var(--radius); padding:16px; background:var(--void); display:none; }
+  .share-result.show{ display:block; }
+  .share-result .sr-label{ font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px;}
+  .share-row{ display:flex; gap:8px; }
+  .share-row input{ flex:1; background:var(--card-2); border:1px solid var(--gold-line); color:var(--gold-soft); padding:10px 12px; border-radius:var(--radius); font-size:12px; }
+  .share-row button{ border:1px solid var(--gold-line); background:transparent; color:var(--gold); padding:0 14px; border-radius:var(--radius); font-size:12px; }
+  .share-row button:hover{ border-color:var(--gold); background:rgba(212,175,55,.08); }
+  .share-actions{ display:flex; gap:10px; margin-top:12px; }
+
+  /* ============ PREVIEW PHONE ============ */
+  .preview-col{ position:sticky; top:20px; }
+  @media (max-width:980px){ .preview-col{ position:static; } }
+  .preview-frame-label{ text-align:center; font-size:10.5px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-bottom:14px; }
+  .phone{ max-width:380px; margin:0 auto; border:10px solid #050403; border-radius:36px; background:#050403; box-shadow:0 40px 90px -30px rgba(0,0,0,0.8), 0 0 0 1px rgba(212,175,55,0.2); overflow:hidden; position:relative; }
+  .phone::before{ content:""; position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:22px; background:#050403; border-radius:0 0 14px 14px; z-index:5; }
+  .phone-screen{ --stage-h:640px; height:640px; position:relative; overflow:hidden; background:var(--void); }
+
+  #inviteView{ --stage-h:100vh; height:100vh; overflow:hidden; display:none; background:var(--void); }
+  .stage{ position:relative; width:100%; height:100%; }
+
+  /* ============ INVITATION SCROLL EXPERIENCE ============ */
+  .invite-scroll{ position:relative; height:var(--stage-h); overflow:hidden; }
+  .invite-scroll.opened{ overflow-y:auto; -webkit-overflow-scrolling:touch; scroll-behavior:smooth; }
+
+  .cover-sec, .hero-sec, .formal-sec, .schedule-sec, .location-sec, .dress-sec, .rsvp-sec, .closing-sec{
+    min-height:var(--stage-h); width:100%; box-sizing:border-box;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:44px 24px; position:relative; text-align:center;
+  }
+  .hero-sec, .formal-sec, .schedule-sec, .location-sec, .dress-sec, .rsvp-sec{ border-top:1px solid var(--gold-line); }
+
+  .flourish{ width:52px; height:1px; background:var(--gold); position:relative; margin:18px auto; flex:none; }
+  .flourish::after{ content:""; position:absolute; top:50%; left:50%; width:7px; height:7px; background:var(--gold); transform:translate(-50%,-50%) rotate(45deg); }
+
+  /* ---- Cover / seal ---- */
+  .cover-sec{ cursor:pointer; background:radial-gradient(circle at 50% 38%, rgba(212,175,55,0.09), transparent 60%), linear-gradient(180deg,#141110,#0a0908); }
+  .cover-frame{ position:absolute; inset:18px; border:1px solid var(--gold-line); pointer-events:none; }
+  .cover-frame::before, .cover-frame::after{ content:""; position:absolute; width:22px; height:22px; border:1px solid var(--gold); opacity:.8; }
+  .cover-frame::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
+  .cover-frame::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
+  .cover-eyebrow{ font-size:10px; letter-spacing:0.34em; text-transform:uppercase; color:var(--muted); margin-bottom:26px; }
+  .seal-big{
+    width:92px; height:92px; border-radius:50%; margin:0 auto;
+    background:radial-gradient(circle at 34% 28%, #d9a24a, #7c4a1c 72%);
+    box-shadow:0 10px 22px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(0,0,0,0.35), inset 0 0 0 5px rgba(0,0,0,0.12);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-ar-display); color:#2a1a08; font-size:15px; letter-spacing:0.02em;
+    transition:transform .8s cubic-bezier(.6,.05,.2,1), opacity .8s ease;
+    position:relative; z-index:3;
+  }
+  .seal-big .sb-line1{ position:absolute; width:100%; text-align:center; }
+  .cover-hint{ margin-top:22px; font-size:10.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold-soft); }
+  .cover-sec.breaking .seal-big{ transform:scale(0.5) rotate(20deg); opacity:0; }
+  .cover-sec.breaking .cover-hint{ opacity:0; transition:opacity .3s; }
+
+  .particles-layer{ position:absolute; inset:0; pointer-events:none; overflow:visible; z-index:5; }
+  .particle{ position:absolute; width:4px; height:4px; background:var(--gold); border-radius:50%; opacity:0; animation:pfloat 1.3s ease-out forwards; }
+  @keyframes pfloat{ 0%{opacity:0; transform:translate(0,0) scale(0.5);} 15%{opacity:1;} 100%{opacity:0; transform:translate(var(--dx),var(--dy)) scale(1.1);} }
+
+  /* ---- Hero ---- */
+  .hero-sec{ background:radial-gradient(600px 300px at 50% 0%, rgba(212,175,55,0.07), transparent 60%); }
+  .hero-eyebrow{ font-size:10px; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold); margin-bottom:22px; }
+  .hero-names{ font-family:var(--font-script); font-style:italic; font-size:34px; color:var(--ivory); line-height:1.3; }
+  .hero-names .hn-amp{ display:block; font-family:var(--font-display); font-style:normal; color:var(--gold); font-size:13px; letter-spacing:0.35em; margin:10px 0; text-transform:uppercase; }
+  .hero-names-ar{ font-family:var(--font-ar-display); font-size:28px; color:var(--ivory); margin-top:8px; }
+  .hero-date{ font-size:13.5px; color:var(--gold-soft); margin-top:6px; letter-spacing:0.03em; }
+  .hero-venue{ font-size:12px; color:var(--muted); margin-top:6px; letter-spacing:0.03em; }
+  .scroll-cue{ margin-top:30px; color:var(--gold-deep); font-size:16px; animation:bob 2s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0); opacity:.5;} 50%{ transform:translateY(6px); opacity:1;} }
+
+  /* ---- Scroll-reveal entrance for each section ---- */
+  .reveal{ opacity:0; transform:translateY(28px); transition:opacity .8s ease, transform .8s ease; }
+  .reveal.revealed{ opacity:1; transform:translateY(0); }
+
+  /* ---- Optional couple portrait ---- */
+  .couple-photo{
+    width:112px; height:112px; border-radius:50%; margin:0 auto 20px; position:relative; z-index:2;
+    padding:4px; background:conic-gradient(from 210deg, var(--gold), var(--gold-soft), var(--gold));
+    box-shadow:0 14px 30px -8px rgba(0,0,0,0.6);
+  }
+  .couple-photo img{ width:100%; height:100%; border-radius:50%; object-fit:cover; display:block; border:2px solid var(--void); }
+  .tpl-blossom .couple-photo img{ border-color:var(--wine-deep); }
+
+  /* ---- Falling petals (Blossom & Oud cover) ---- */
+  .petals-layer{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:2; display:none; }
+  .tpl-blossom .petals-layer{ display:block; }
+  .petal{
+    position:absolute; top:-8%; width:9px; height:9px; border-radius:60% 0 60% 0;
+    background:linear-gradient(135deg,#e8c877,#c94b6b);
+    opacity:0; animation:petal-fall linear infinite;
+  }
+  @keyframes petal-fall{
+    0%{ opacity:0; transform:translateY(0) translateX(0) rotate(0deg); }
+    8%{ opacity:.85; }
+    100%{ opacity:0; transform:translateY(560px) translateX(var(--drift,20px)) rotate(320deg); }
+  }
+
+  /* ---- Fine paper grain, adds a print-like premium texture ---- */
+  .invite-scroll::before{
+    content:""; position:absolute; inset:0; pointer-events:none; z-index:4; opacity:.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  .ic-count{ display:flex; justify-content:center; gap:14px; margin-top:22px; }
+  .ic-count .cbox{ text-align:center; min-width:44px; }
+  .ic-count .cnum{ font-family:var(--font-display); font-size:22px; color:var(--ivory); display:block; }
+  .ic-count .clabel{ font-size:8.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; }
+
+  /* ---- Formal wording ---- */
+  .formal-frame{ max-width:300px; border:1px solid var(--gold-line); border-radius:130px 130px 4px 4px; padding:46px 26px 30px; position:relative; }
+  .formal-frame::before{ content:""; position:absolute; top:14px; left:50%; transform:translateX(-50%); width:60%; height:1px; background:var(--gold-line); }
+  .bismillah{ font-family:var(--font-ar-display); font-size:19px; color:var(--gold-soft); margin-bottom:18px; }
+  .formal-eyebrow{ font-size:10px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; }
+  .formal-text{ font-size:13px; color:var(--ivory); line-height:2; margin:0; }
+
+  /* ---- Schedule ---- */
+  .schedule-title, .location-title, .dress-title, .rsvp-title{ font-size:10px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); margin-bottom:22px; }
+  .schedule-list{ width:100%; max-width:280px; display:flex; flex-direction:column; gap:14px; }
+  .sched-row{ display:flex; justify-content:space-between; align-items:baseline; border-bottom:1px dashed var(--gold-line); padding-bottom:10px; }
+  .sched-row .lbl{ font-family:var(--font-display); font-style:italic; font-size:14px; color:var(--gold-soft); }
+  .sched-row .val{ font-size:11.5px; color:var(--muted); }
+
+  /* ---- Location ---- */
+  .pin{ width:16px; height:16px; border-radius:50% 50% 50% 0; background:var(--gold); transform:rotate(-45deg); margin:0 auto 18px; box-shadow:0 4px 10px rgba(212,175,55,.4); }
+  .location-venue{ font-family:var(--font-script); font-style:italic; font-size:22px; color:var(--ivory); }
+  .location-city{ font-size:12px; color:var(--muted); margin-top:6px; }
+
+  /* ---- Dress code ---- */
+  .dress-text{ font-size:13px; color:var(--muted); line-height:1.9; max-width:280px; }
+
+  /* ---- RSVP ---- */
+  .rsvp-form{ width:100%; max-width:280px; display:flex; flex-direction:column; gap:12px; }
+  .rsvp-form input[type=text], .rsvp-form input[type=number]{
+    width:100%; background:var(--void); border:1px solid var(--gold-line); color:var(--ivory);
+    padding:12px 14px; border-radius:2px; font-size:13px; text-align:center; outline:none;
+  }
+  .rsvp-form input:focus{ border-color:var(--gold); }
+  .rsvp-attend{ display:flex; gap:8px; justify-content:center; }
+  .rsvp-attend label{ flex:1; }
+  .rsvp-attend input{ display:none; }
+  .rsvp-attend span{ display:block; border:1px solid var(--gold-line); padding:10px 6px; border-radius:2px; font-size:11.5px; color:var(--muted); transition:.2s; }
+  .rsvp-attend input:checked + span{ border-color:var(--gold); color:var(--gold); background:rgba(212,175,55,.08); }
+  .rsvp-submit{ margin-top:4px; }
+  .rsvp-thanks{ display:none; font-size:12.5px; color:var(--gold-soft); margin-top:10px; }
+  .rsvp-thanks.show{ display:block; }
+
+  /* ---- Closing ---- */
+  .closing-mark{ width:30px; height:30px; border:1px solid var(--gold); transform:rotate(45deg); margin-bottom:22px; }
+  .closing-text{ font-family:var(--font-display); font-style:italic; font-size:17px; color:var(--gold-soft); }
+  .closing-sub{ font-size:9.5px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted-dim); margin-top:10px; }
+
+  /* ---- Decorative corner florals & ring icon (used by Blossom & Oud) ---- */
+  .floral-corner{ position:absolute; width:96px; height:96px; opacity:.9; pointer-events:none; z-index:1; display:none; }
+  .floral-corner.fc-tl{ top:10px; left:10px; }
+  .floral-corner.fc-tr{ top:10px; right:10px; transform:scaleX(-1); }
+  .ring-icon{ display:none; margin:0 auto 14px; }
+
+  /* ---- Template: Viktor & Paula (unchanged dark/gold minimal) ---- */
+  .tpl-viktor .hero-names{ font-family:var(--font-display); font-style:normal; letter-spacing:0.02em; }
+  .tpl-viktor .formal-frame{ border-radius:4px; }
+  .tpl-viktor .cover-frame{ inset:14px; }
+  .tpl-viktor .pin{ display:block; }
+
+  /* ---- Template: Blossom & Oud (burgundy, cream & gold floral) ---- */
+  .tpl-blossom .floral-corner{ display:block; }
+  .tpl-blossom .ring-icon{ display:block; }
+  .tpl-blossom .pin{ display:none; }
+
+  .tpl-blossom .cover-sec{
+    background: radial-gradient(circle at 50% 30%, rgba(245,225,200,0.08), transparent 55%), linear-gradient(175deg, var(--wine), var(--wine-deep));
+  }
+  .tpl-blossom .cover-frame{ border-color:var(--wine-line); }
+  .tpl-blossom .cover-frame::before, .tpl-blossom .cover-frame::after{ border-color:var(--cream); }
+  .tpl-blossom .cover-eyebrow{ color:var(--cream); opacity:.75; }
+  .tpl-blossom .seal-big{
+    background:radial-gradient(circle at 34% 28%, #f0d48a, #a9761f 72%);
+    box-shadow:0 10px 22px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(0,0,0,0.25), inset 0 0 0 5px rgba(122,17,48,0.25);
+  }
+  .tpl-blossom .cover-hint{ color:var(--cream); }
+  .tpl-blossom .particle{ background:#f0d48a; }
+
+  .tpl-blossom .hero-sec, .tpl-blossom .schedule-sec, .tpl-blossom .dress-sec, .tpl-blossom .rsvp-sec, .tpl-blossom .closing-sec{
+    background:linear-gradient(180deg, var(--wine), var(--wine-deep)); border-top-color:var(--wine-line);
+  }
+  .tpl-blossom .hero-sec{ padding-top:110px; }
+  .tpl-blossom .hero-eyebrow{ color:var(--cream); opacity:.8; }
+  .tpl-blossom .hero-names{ font-family:var(--font-allura); font-size:44px; color:var(--cream); line-height:1.2; }
+  .tpl-blossom .hero-names .hn-amp{ color:#e8c877; }
+  .tpl-blossom .hero-names-ar{ color:var(--cream); }
+  .tpl-blossom .hero-date{ color:#e8c877; }
+  .tpl-blossom .hero-venue{ color:rgba(247,237,224,0.75); }
+  .tpl-blossom .flourish{ background:#e8c877; }
+  .tpl-blossom .flourish::after{ background:#e8c877; }
+  .tpl-blossom .scroll-cue{ color:rgba(247,237,224,0.6); }
+  .tpl-blossom .ic-count .cbox{ border:1px solid var(--wine-line); border-radius:4px; padding:8px 10px; }
+  .tpl-blossom .ic-count .cnum{ color:var(--cream); }
+  .tpl-blossom .ic-count .clabel{ color:rgba(247,237,224,0.65); }
+
+  .tpl-blossom .formal-sec{ background:linear-gradient(180deg, var(--wine), var(--wine-deep)); border-top-color:var(--wine-line); padding-top:120px; }
+  .tpl-blossom .formal-frame{ border-color:rgba(247,237,224,0.35); border-radius:6px; background:rgba(0,0,0,0.08); }
+  .tpl-blossom .formal-frame::before{ background:rgba(247,237,224,0.35); }
+  .tpl-blossom .bismillah{ color:#e8c877; }
+  .tpl-blossom .formal-eyebrow{ color:var(--cream); }
+  .tpl-blossom .formal-text{ font-family:var(--font-script); font-style:italic; font-size:15px; color:var(--cream); }
+
+  .tpl-blossom .schedule-title, .tpl-blossom .dress-title, .tpl-blossom .rsvp-title{ color:#e8c877; }
+  .tpl-blossom .sched-row{ border-bottom-color:var(--wine-line); }
+  .tpl-blossom .sched-row .lbl{ color:#e8c877; }
+  .tpl-blossom .sched-row .val{ color:rgba(247,237,224,0.75); }
+  .tpl-blossom .dress-text{ color:rgba(247,237,224,0.8); }
+
+  .tpl-blossom .location-sec{ background:var(--cream); border-top-color:var(--cream-line); padding-top:110px; }
+  .tpl-blossom .location-title{ color:var(--wine); }
+  .tpl-blossom .location-venue{ font-family:var(--font-script); font-style:italic; color:var(--wine-deep); }
+  .tpl-blossom .location-city{ color:#8a6a55; }
+  .tpl-blossom .ic-btn{ border-color:var(--wine); color:var(--wine); }
+  .tpl-blossom .ic-btn.solid{ background:var(--wine); color:var(--cream); }
+  .tpl-blossom .ic-btn.solid:hover{ background:var(--wine-deep); }
+
+  .tpl-blossom .rsvp-form input{ background:rgba(0,0,0,0.15); border-color:var(--wine-line); color:var(--cream); }
+  .tpl-blossom .rsvp-attend span{ border-color:var(--wine-line); color:rgba(247,237,224,0.7); }
+  .tpl-blossom .rsvp-attend input:checked + span{ border-color:#e8c877; color:#e8c877; background:rgba(232,200,119,0.12); }
+  .tpl-blossom .rsvp-thanks{ color:#e8c877; }
+
+  .tpl-blossom .closing-mark{ border-color:#e8c877; }
+  .tpl-blossom .closing-text{ font-family:var(--font-allura); font-size:26px; color:var(--cream); }
+  .tpl-blossom .closing-sub{ color:rgba(247,237,224,0.55); }
+
+  .ic-btn{ display:inline-block; text-align:center; margin-top:8px; padding:12px 26px; border:1px solid var(--gold); color:var(--gold); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; border-radius:2px; background:transparent; transition:.2s; }
+  .ic-btn:hover{ background:rgba(212,175,55,.1); }
+  .ic-btn.solid{ background:var(--gold); color:#171310; }
+  .ic-btn.solid:hover{ background:var(--gold-soft); }
+
+  /* ============ FULL INVITATION VIEW ============ */
+  .back-to-builder{
+    position:fixed; top:16px; inset-inline-start:16px; z-index:50;
+    font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted);
+    border:1px solid var(--gold-line); padding:8px 14px; border-radius:20px; background:rgba(10,9,8,0.7);
+    text-decoration:none; backdrop-filter:blur(6px);
+  }
+  .back-to-builder:hover{ color:var(--gold); border-color:var(--gold); }
+
+  @media (max-width:480px){ .hero-names{ font-size:28px; } }
+
+  .footer-note{ max-width:1400px; margin:40px auto 0; padding:0 clamp(18px,4vw,48px) 40px; color:var(--muted-dim); font-size:11px; text-align:center; letter-spacing:0.03em; }
+</style>
+</head>
+<body dir="rtl">
+
+<!-- ============ BUILDER VIEW ============ -->
+<div id="builderView">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark"><span>D</span></div>
+      <div>
+        <div class="brand-name">Blossom &amp; Oud</div>
+        <div class="brand-sub" data-i18n="brandSub">استوديو الدعوات</div>
+      </div>
+    </div>
+    <div class="lang-switch">
+      <button data-uilang="ar" class="active">AR</button>
+      <button data-uilang="en">EN</button>
+      <button data-uilang="fr">FR</button>
+    </div>
+  </div>
+
+  <div class="hero-line">
+    <h1 data-i18n="heroTitle">اعمل دعوة <em>زفاف</em> أو خطوبة بلينك خاص بيك</h1>
+    <p data-i18n="heroSub">أدخل تفاصيل مناسبتكم في اللوحة التالية، وشاهد المعاينة الحيّة للتصميم الحقيقي تتحدث فوراً، ثم أنشئ رابطاً أنيقاً لمشاركته مع ضيوفكم.</p>
+  </div>
+
+  <div class="app-grid">
+    <!-- FORM -->
+    <form class="panel" id="builderForm" novalidate>
+
+      <div class="section-block">
+        <div class="section-label" data-i18n="secTemplate">القالب</div>
+        <div class="template-grid">
+          <div class="template-card active" data-template="blossom">
+            <div class="tname">Blossom &amp; Oud</div>
+            <div class="tdesc" data-i18n="tplBlossomDesc">دافئ، زخرفي، عبق شرقي</div>
+            <div class="template-swatch"><i style="background:#7a1130"></i><i style="background:#f7ede0"></i><i style="background:#e8c877"></i></div>
+          </div>
+          <div class="template-card" data-template="viktor">
+            <div class="tname">Viktor &amp; Paula</div>
+            <div class="tdesc" data-i18n="tplViktorDesc">هندسي، عصري، أنيق</div>
+            <div class="template-swatch"><i style="background:#D4AF37"></i><i style="background:#0b0b0d"></i><i style="background:#f3ecda"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-label" data-i18n="secEventType">نوع المناسبة</div>
+        <div class="pill-group" id="eventTypeGroup">
+          <button type="button" class="pill active" data-event="wedding" data-i18n="eventWedding">فرح (زفاف)</button>
+          <button type="button" class="pill" data-event="engagement" data-i18n="eventEngagement">خطوبة</button>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-label" data-i18n="secLang">لغة الدعوة</div>
+        <div class="pill-group" id="inviteLangGroup">
+          <button type="button" class="pill active" data-lang="ar">العربية</button>
+          <button type="button" class="pill" data-lang="en">English</button>
+          <button type="button" class="pill" data-lang="fr">Français</button>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-label" data-i18n="secNames">أسماء العروسين</div>
+        <div class="field-row">
+          <div class="field">
+            <label data-i18n="brideLatinLbl">اسم العروس (Latin)</label>
+            <input type="text" id="brideLatin" placeholder="Amira">
+          </div>
+          <div class="field">
+            <label data-i18n="brideArLbl">اسم العروس (عربي)</label>
+            <input type="text" id="brideAr" placeholder="أميرة">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label data-i18n="groomLatinLbl">اسم العريس (Latin)</label>
+            <input type="text" id="groomLatin" placeholder="Karim">
+          </div>
+          <div class="field">
+            <label data-i18n="groomArLbl">اسم العريس (عربي)</label>
+            <input type="text" id="groomAr" placeholder="كريم">
+          </div>
+        </div>
+        <div class="field-error" id="err-names" data-i18n="errNames">الرجاء إدخال اسم العروس والعريس على الأقل باللغة اللاتينية.</div>
+        <div class="field" style="margin-top:14px;">
+          <label data-i18n="coupleImageLbl">رابط صورة العروسين (اختياري)</label>
+          <input type="url" id="coupleImage" placeholder="https://...">
+          <div class="field-hint" data-i18n="coupleImageHint">ألصق رابط صورة مباشر (مثل Imgur أو صورة Google Drive عامة)، وستظهر داخل إطار ذهبي أعلى الدعوة.</div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-label" data-i18n="secVenue">المكان والتاريخ</div>
+        <div class="field">
+          <label data-i18n="venueLbl">اسم القاعة / المكان</label>
+          <input type="text" id="venue" placeholder="Villa Zephyra">
+        </div>
+        <div class="field">
+          <label data-i18n="cityLbl">المدينة / البلد</label>
+          <input type="text" id="city" placeholder="الجزائر العاصمة، الجزائر">
+        </div>
+        <div class="field-error" id="err-venue" data-i18n="errVenue">الرجاء إدخال اسم القاعة.</div>
+
+        <div class="field-row">
+          <div class="field">
+            <label data-i18n="ceremonyLbl">العقد / المراسم</label>
+            <input type="datetime-local" id="ceremony">
+          </div>
+          <div class="field">
+            <label data-i18n="receptionLbl">الاستقبال</label>
+            <input type="datetime-local" id="reception">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label data-i18n="dinnerLbl">العشاء</label>
+            <input type="datetime-local" id="dinner">
+          </div>
+          <div class="field">
+            <label data-i18n="partyLbl">السهرة</label>
+            <input type="datetime-local" id="party">
+          </div>
+        </div>
+        <div class="field-error" id="err-date" data-i18n="errDate">الرجاء إدخال موعد واحد على الأقل.</div>
+
+        <div class="field">
+          <label data-i18n="mapUrlLbl">رابط الموقع على خرائط جوجل (اختياري)</label>
+          <input type="url" id="mapUrl" placeholder="https://maps.app.goo.gl/...">
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-label" data-i18n="secSections">أقسام الدعوة</div>
+        <div class="toggle-list">
+          <label class="toggle-row">
+            <span><span class="trow-label" data-i18n="toggleCountdown">العدّ التنازلي</span><br><span class="trow-sub" data-i18n="toggleCountdownSub">إحصاء تنازلي مباشر حتى الموعد</span></span>
+            <span class="switch"><input type="checkbox" id="toggleCountdown" checked><span class="track"><span class="knob"></span></span></span>
+          </label>
+          <label class="toggle-row">
+            <span><span class="trow-label" data-i18n="toggleSchedule">جدول الأوقات</span><br><span class="trow-sub" data-i18n="toggleScheduleSub">عرض توقيت كل فقرة من الحفل</span></span>
+            <span class="switch"><input type="checkbox" id="toggleSchedule" checked><span class="track"><span class="knob"></span></span></span>
+          </label>
+          <label class="toggle-row">
+            <span><span class="trow-label" data-i18n="toggleDress">الزي المقترح</span><br><span class="trow-sub" data-i18n="toggleDressSub">إرشاد الضيوف حول اللباس</span></span>
+            <span class="switch"><input type="checkbox" id="toggleDress" checked><span class="track"><span class="knob"></span></span></span>
+          </label>
+          <label class="toggle-row">
+            <span><span class="trow-label" data-i18n="toggleRsvp">تأكيد الحضور</span><br><span class="trow-sub" data-i18n="toggleRsvpSub">استمارة تأكيد داخل الدعوة</span></span>
+            <span class="switch"><input type="checkbox" id="toggleRsvp" checked><span class="track"><span class="knob"></span></span></span>
+          </label>
+          <label class="toggle-row">
+            <span><span class="trow-label" data-i18n="toggleMap">خريطة الموقع</span><br><span class="trow-sub" data-i18n="toggleMapSub">زر التوجّه عبر خرائط جوجل</span></span>
+            <span class="switch"><input type="checkbox" id="toggleMap"><span class="track"><span class="knob"></span></span></span>
+          </label>
+        </div>
+
+        <div class="field" style="margin-top:14px;">
+          <label data-i18n="dressCodeLbl">وصف الزي المقترح</label>
+          <textarea id="dressCode" placeholder="أناقة رسمية — درجات الذهبي والبيج"></textarea>
+        </div>
+        <div class="field">
+          <label data-i18n="rsvpPhoneLbl">رقم واتساب لتأكيد الحضور</label>
+          <input type="tel" id="rsvpPhone" placeholder="+213 555 000 000">
+        </div>
+      </div>
+
+      <div class="section-block generate-box">
+        <button type="submit" class="btn btn-gold btn-block" id="generateBtn" data-i18n="generateBtn">إنشاء الدعوة</button>
+        <div class="pay-note" data-i18n="payNote">سيتم تحويلك لصفحة دفع 500 دج التجريبية عبر Chargily Pay قبل الحصول على رابط الدعوة.</div>
+        <div class="pay-error" id="payError"></div>
+
+        <div class="share-result" id="shareResult">
+          <div class="sr-label" data-i18n="shareLabel">رابط الدعوة القابل للمشاركة</div>
+          <div class="share-row">
+            <input type="text" id="shareLink" readonly>
+            <button type="button" id="copyLinkBtn" data-i18n="copyBtn">نسخ</button>
+          </div>
+          <div class="share-actions">
+            <a href="#" target="_blank" class="btn btn-ghost" style="flex:1;" id="openPreviewBtn" data-i18n="openPreviewBtn">فتح المعاينة الكاملة</a>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- PAYMENT CONFIRMATION GATE (no backend — static Chargily Test Payment Link) -->
+    <div class="pay-overlay" id="payOverlay">
+      <div class="pay-box">
+        <div class="pay-spinner"></div>
+        <div class="pay-status" id="payStatus" data-i18n="payVerifying">جارٍ التحقق من عملية الدفع مع Chargily...</div>
+      </div>
+    </div>
+
+    <!-- LIVE PREVIEW -->
+    <div class="preview-col">
+      <div class="preview-frame-label" data-i18n="previewLabel">معاينة حية للتصميم الحقيقي</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="stage" id="previewStage"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note" data-i18n="footerNote">Atelier Dawat — تُنشأ الدعوة بالكامل داخل متصفحك، ولا تُخزَّن بياناتكم على أي خادم.</div>
+</div>
+
+<!-- ============ FULL INVITATION VIEW ============ -->
+<div id="inviteView">
+  <a href="javascript:void(0)" class="back-to-builder" id="backToBuilder" data-i18n="backBtn">✕ العودة للمصمم</a>
+  <div class="stage" id="fullStage"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ===================== I18N (UI chrome) ===================== */
+  const UI = {
+    ar:{ brandSub:"استوديو الدعوات", heroTitle:'اعمل دعوة <em>زفاف</em> أو خطوبة بلينك خاص بيك',
+      heroSub:"أدخل تفاصيل مناسبتكم في اللوحة التالية، وشاهد المعاينة الحيّة للتصميم الحقيقي تتحدث فوراً، ثم أنشئ رابطاً أنيقاً لمشاركته مع ضيوفكم.",
+      secTemplate:"القالب", tplBlossomDesc:"دافئ، زخرفي، عبق شرقي", tplViktorDesc:"هندسي، عصري، أنيق",
+      secEventType:"نوع المناسبة", eventWedding:"فرح (زفاف)", eventEngagement:"خطوبة",
+      secLang:"لغة الدعوة", secNames:"أسماء العروسين",
+      brideLatinLbl:"اسم العروس (Latin)", brideArLbl:"اسم العروس (عربي)",
+      groomLatinLbl:"اسم العريس (Latin)", groomArLbl:"اسم العريس (عربي)",
+      coupleImageLbl:"رابط صورة العروسين (اختياري)",
+      coupleImageHint:"ألصق رابط صورة مباشر (مثل Imgur أو صورة Google Drive عامة)، وستظهر داخل إطار ذهبي أعلى الدعوة.",
+      errNames:"الرجاء إدخال اسم العروس والعريس على الأقل باللغة اللاتينية.",
+      secVenue:"المكان والتاريخ", venueLbl:"اسم القاعة / المكان", cityLbl:"المدينة / البلد",
+      errVenue:"الرجاء إدخال اسم القاعة.",
+      ceremonyLbl:"العقد / المراسم", receptionLbl:"الاستقبال", dinnerLbl:"العشاء", partyLbl:"السهرة",
+      errDate:"الرجاء إدخال موعد واحد على الأقل.",
+      mapUrlLbl:"رابط الموقع على خرائط جوجل (اختياري)",
+      secSections:"أقسام الدعوة",
+      toggleCountdown:"العدّ التنازلي", toggleCountdownSub:"إحصاء تنازلي مباشر حتى الموعد",
+      toggleSchedule:"جدول الأوقات", toggleScheduleSub:"عرض توقيت كل فقرة من الحفل",
+      toggleDress:"الزي المقترح", toggleDressSub:"إرشاد الضيوف حول اللباس",
+      toggleRsvp:"تأكيد الحضور", toggleRsvpSub:"استمارة تأكيد داخل الدعوة",
+      toggleMap:"خريطة الموقع", toggleMapSub:"زر التوجّه عبر خرائط جوجل",
+      dressCodeLbl:"وصف الزي المقترح", rsvpPhoneLbl:"رقم واتساب لتأكيد الحضور",
+      generateBtn:"إنشاء الدعوة", shareLabel:"رابط الدعوة القابل للمشاركة", copyBtn:"نسخ",
+      openPreviewBtn:"فتح المعاينة الكاملة", previewLabel:"معاينة حية للتصميم الحقيقي",
+      footerNote:"Atelier Dawat — تُنشأ الدعوة بالكامل داخل متصفحك، ولا تُخزَّن بياناتكم على أي خادم.",
+      backBtn:"✕ العودة للمصمم", copiedMsg:"تم النسخ ✓",
+      payNote:"سيتم تحويلك لدفع 500 دج عبر Chargily Pay (وضع تجريبي) قبل الحصول على رابط الدعوة.",
+      payRedirecting:"جارٍ تجهيز رابط الدفع...", payVerifying:"جارٍ التحقق من عملية الدفع مع Chargily...",
+      payFailedCreate:"تعذّر إنشاء رابط الدفع. تأكد من نشر الدالتين في مجلد api ثم أعد المحاولة.",
+      payFailedVerify:"تعذّر تأكيد عملية الدفع. إن كنت قد دفعت فعلاً، تواصل معنا أو أعد المحاولة.",
+      payNotPaid:"لم تكتمل عملية الدفع، لذلك لن تُفتح الدعوة. حاول مجدداً."
+    },
+    en:{ brandSub:"Digital Invitation Studio", heroTitle:'Design your <em>luxury</em> digital invitation',
+      heroSub:"Fill in your celebration details on the panel below, watch the live preview respond instantly, then generate an elegant link to share with your guests.",
+      secTemplate:"Template", tplBlossomDesc:"Warm, ornate, oriental scent", tplViktorDesc:"Geometric, modern, refined",
+      secEventType:"Event Type", eventWedding:"Wedding", eventEngagement:"Engagement",
+      secLang:"Invitation Language", secNames:"Couple's Names",
+      brideLatinLbl:"Bride's Name (Latin)", brideArLbl:"Bride's Name (Arabic)",
+      groomLatinLbl:"Groom's Name (Latin)", groomArLbl:"Groom's Name (Arabic)",
+      coupleImageLbl:"Couple's Photo URL (optional)",
+      coupleImageHint:"Paste a direct image link (e.g. Imgur or a public Google Drive photo) — it will appear inside a gold frame at the top of the invitation.",
+      errNames:"Please enter at least the bride's and groom's names in Latin script.",
+      secVenue:"Location & Date", venueLbl:"Venue / Hall Name", cityLbl:"City / Country",
+      errVenue:"Please enter the venue name.",
+      ceremonyLbl:"Ceremony", receptionLbl:"Reception", dinnerLbl:"Dinner", partyLbl:"Party",
+      errDate:"Please enter at least one date & time.",
+      mapUrlLbl:"Google Maps URL (optional)",
+      secSections:"Invitation Sections",
+      toggleCountdown:"Countdown Timer", toggleCountdownSub:"Live countdown to the event",
+      toggleSchedule:"Schedule of Events", toggleScheduleSub:"Show timing for each part of the celebration",
+      toggleDress:"Dress Code", toggleDressSub:"Guide guests on attire",
+      toggleRsvp:"RSVP Confirmation", toggleRsvpSub:"In-page RSVP form",
+      toggleMap:"Google Map Location", toggleMapSub:"Directions button to the venue",
+      dressCodeLbl:"Dress Code Description", rsvpPhoneLbl:"WhatsApp number for RSVP",
+      generateBtn:"Generate Invitation", shareLabel:"Shareable Invitation Link", copyBtn:"Copy",
+      openPreviewBtn:"Open Full Preview", previewLabel:"Live Preview — Phone Size",
+      footerNote:"Atelier Dawat — your invitation is generated entirely in your browser; no data is stored on any server.",
+      backBtn:"✕ Back to builder", copiedMsg:"Copied ✓",
+      payNote:"You'll be redirected to pay 500 DZD via Chargily Pay (test mode) before getting your invitation link.",
+      payRedirecting:"Preparing your payment link...", payVerifying:"Verifying your payment with Chargily...",
+      payFailedCreate:"Couldn't create the payment link. Make sure the two functions in /api are deployed, then try again.",
+      payFailedVerify:"Couldn't confirm your payment. If you already paid, please contact us or try again.",
+      payNotPaid:"Payment wasn't completed, so the invitation stays locked. Please try again."
+    },
+    fr:{ brandSub:"Studio d'invitations numériques", heroTitle:"Créez votre invitation numérique <em>de luxe</em>",
+      heroSub:"Renseignez les détails de votre événement ci-dessous, observez l'aperçu s'actualiser en direct, puis générez un lien élégant à partager avec vos invités.",
+      secTemplate:"Modèle", tplBlossomDesc:"Chaleureux, ornemental, esprit oriental", tplViktorDesc:"Géométrique, moderne, raffiné",
+      secEventType:"Type d'événement", eventWedding:"Mariage", eventEngagement:"Fiançailles",
+      secLang:"Langue de l'invitation", secNames:"Noms des mariés",
+      brideLatinLbl:"Nom de la mariée (Latin)", brideArLbl:"Nom de la mariée (Arabe)",
+      groomLatinLbl:"Nom du marié (Latin)", groomArLbl:"Nom du marié (Arabe)",
+      coupleImageLbl:"Lien de la photo du couple (optionnel)",
+      coupleImageHint:"Collez un lien d'image direct (Imgur ou une photo Google Drive publique) — elle apparaîtra dans un cadre doré en haut de l'invitation.",
+      errNames:"Veuillez saisir au moins les noms en caractères latins.",
+      secVenue:"Lieu et date", venueLbl:"Nom de la salle / du lieu", cityLbl:"Ville / Pays",
+      errVenue:"Veuillez indiquer le nom du lieu.",
+      ceremonyLbl:"Cérémonie", receptionLbl:"Réception", dinnerLbl:"Dîner", partyLbl:"Soirée",
+      errDate:"Veuillez indiquer au moins une date et heure.",
+      mapUrlLbl:"Lien Google Maps (optionnel)",
+      secSections:"Sections de l'invitation",
+      toggleCountdown:"Compte à rebours", toggleCountdownSub:"Compte à rebours en direct",
+      toggleSchedule:"Programme de la soirée", toggleScheduleSub:"Afficher les horaires de chaque moment",
+      toggleDress:"Code vestimentaire", toggleDressSub:"Guider les invités sur la tenue",
+      toggleRsvp:"Confirmation RSVP", toggleRsvpSub:"Formulaire RSVP intégré",
+      toggleMap:"Localisation", toggleMapSub:"Bouton d'itinéraire vers le lieu",
+      dressCodeLbl:"Description du code vestimentaire", rsvpPhoneLbl:"Numéro WhatsApp pour le RSVP",
+      generateBtn:"Générer l'invitation", shareLabel:"Lien d'invitation à partager", copyBtn:"Copier",
+      openPreviewBtn:"Ouvrir l'aperçu complet", previewLabel:"Aperçu en direct — format téléphone",
+      footerNote:"Atelier Dawat — votre invitation est générée entièrement dans votre navigateur ; aucune donnée n'est stockée sur un serveur.",
+      backBtn:"✕ Retour à l'éditeur", copiedMsg:"Copié ✓",
+      payNote:"Vous serez redirigé pour payer 500 DZD via Chargily Pay (mode test) avant d'obtenir votre lien d'invitation.",
+      payRedirecting:"Préparation du lien de paiement...", payVerifying:"Vérification du paiement avec Chargily...",
+      payFailedCreate:"Impossible de créer le lien de paiement. Vérifiez que les deux fonctions du dossier /api sont déployées, puis réessayez.",
+      payFailedVerify:"Impossible de confirmer le paiement. Si vous avez déjà payé, contactez-nous ou réessayez.",
+      payNotPaid:"Le paiement n'a pas abouti, l'invitation reste verrouillée. Merci de réessayer."
+    }
+  };
+
+  /* Invitation content translations */
+  const T = {
+    ar:{ dir:"rtl", coverEyebrow:"دعوة خاصة", tapToOpen:"المسوا الختم لفتح الدعوة",
+      weddingEyebrow:"بحمد الله وتوفيقه", weddingTitle:"حفل زفاف", engagementTitle:"حفل خطوبة",
+      and:"و", bismillah:"بسم الله الرحمن الرحيم",
+      formalIntro:(s)=> `يسعد ${s.brideAr||s.brideLatin} و${s.groomAr||s.groomLatin} أن يدعواكم لمشاركتهما أجمل لحظات حياتهما، وذلك بحضوركم الكريم الذي يزيدنا شرفاً وسروراً.`,
+      days:"يوم", hours:"ساعة", minutes:"دقيقة", seconds:"ثانية", countdownTitle:"يبدأ الاحتفال بعد",
+      scheduleTitle:"جدول الحفل", ceremony:"العقد", reception:"الاستقبال", dinner:"العشاء", party:"السهرة",
+      locationTitle:"مكان الحفل", directionsBtn:"عرض الموقع على الخريطة",
+      dressTitle:"الزي المقترح",
+      rsvpTitle:"تأكيد الحضور", rsvpNameLbl:"الاسم الكامل", rsvpGuestsLbl:"عدد الأشخاص",
+      rsvpAttendLbl:"هل ستحضرون؟", rsvpYes:"نعم، سنحضر", rsvpNo:"نعتذر عن الحضور",
+      rsvpSubmit:"إرسال التأكيد", rsvpThanks:"شكراً لكم، تم تسجيل ردّكم بكل سرور ♥",
+      closingText:"بحضوركم تكتمل فرحتنا", closingSub:"Atelier Dawat",
+      rsvpMsgPrefix:"السلام عليكم، أؤكد حضوري لحفل"
+    },
+    en:{ dir:"ltr", coverEyebrow:"A Private Invitation", tapToOpen:"Tap the seal to open",
+      weddingEyebrow:"Together with their families", weddingTitle:"Wedding Celebration", engagementTitle:"Engagement Celebration",
+      and:"&", bismillah:"",
+      formalIntro:(s)=> `${s.brideLatin||''} & ${s.groomLatin||''} joyfully invite you to share in the celebration of their new beginning. Your presence would mean the world to us.`,
+      days:"Days", hours:"Hours", minutes:"Min", seconds:"Sec", countdownTitle:"Celebration begins in",
+      scheduleTitle:"Order of the Day", ceremony:"Ceremony", reception:"Reception", dinner:"Dinner", party:"Party",
+      locationTitle:"Venue", directionsBtn:"View Location on Map",
+      dressTitle:"Dress Code",
+      rsvpTitle:"RSVP", rsvpNameLbl:"Full Name", rsvpGuestsLbl:"Number of Guests",
+      rsvpAttendLbl:"Will you attend?", rsvpYes:"Joyfully accept", rsvpNo:"Regretfully decline",
+      rsvpSubmit:"Send RSVP", rsvpThanks:"Thank you — your response has been noted with love ♥",
+      closingText:"Your presence is our greatest gift", closingSub:"Atelier Dawat",
+      rsvpMsgPrefix:"Hello, I confirm my attendance at the"
+    },
+    fr:{ dir:"ltr", coverEyebrow:"Une invitation privée", tapToOpen:"Touchez le sceau pour ouvrir",
+      weddingEyebrow:"Avec leurs familles", weddingTitle:"Célébration de mariage", engagementTitle:"Célébration de fiançailles",
+      and:"&", bismillah:"",
+      formalIntro:(s)=> `${s.brideLatin||''} & ${s.groomLatin||''} sont heureux de vous convier à célébrer avec eux ce moment unique. Votre présence sera notre plus beau cadeau.`,
+      days:"Jours", hours:"Heures", minutes:"Min", seconds:"Sec", countdownTitle:"La célébration commence dans",
+      scheduleTitle:"Déroulé de la soirée", ceremony:"Cérémonie", reception:"Réception", dinner:"Dîner", party:"Soirée",
+      locationTitle:"Lieu de réception", directionsBtn:"Voir sur la carte",
+      dressTitle:"Code vestimentaire",
+      rsvpTitle:"RSVP", rsvpNameLbl:"Nom complet", rsvpGuestsLbl:"Nombre de personnes",
+      rsvpAttendLbl:"Serez-vous présent(e) ?", rsvpYes:"Je serai présent(e)", rsvpNo:"Je ne pourrai pas être présent(e)",
+      rsvpSubmit:"Envoyer ma réponse", rsvpThanks:"Merci — votre réponse a été enregistrée avec plaisir ♥",
+      closingText:"Votre présence est notre plus beau cadeau", closingSub:"Atelier Dawat",
+      rsvpMsgPrefix:"Bonjour, je confirme ma présence à la"
+    }
+  };
+
+  const LOCALE_MAP = { ar:'ar-DZ', en:'en-GB', fr:'fr-FR' };
+
+  /* ===================== STATE ===================== */
+  function defaultState(){
+    return {
+      template:'blossom', eventType:'wedding', lang:'ar',
+      brideLatin:'Amira', brideAr:'أميرة', groomLatin:'Karim', groomAr:'كريم',
+      coupleImage:'',
+      venue:'Villa Zephyra', city:'الجزائر العاصمة، الجزائر',
+      ceremony:'', reception:'', dinner:'', party:'',
+      mapUrl:'', dressCode:'أناقة رسمية — درجات الذهبي والبيج', rsvpPhone:'',
+      toggles:{ countdown:true, schedule:true, dressCode:true, rsvp:true, map:false }
+    };
+  }
+  let state = defaultState();
+  let uiLang = 'ar';
+
+  /* ===================== HELPERS ===================== */
+  function el(id){ return document.getElementById(id); }
+  function esc(s){ return (s||'').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function fmtDate(iso, lang){
+    if(!iso) return '';
+    const d = new Date(iso);
+    if(isNaN(d)) return '';
+    try{ return d.toLocaleString(LOCALE_MAP[lang]||'en-GB', { weekday:'long', day:'numeric', month:'long', hour:'2-digit', minute:'2-digit' }); }
+    catch(e){ return iso; }
+  }
+  function mainTargetDate(s){ return s.ceremony || s.reception || s.dinner || s.party || ''; }
+
+  /* Hand-drawn gold vine + bloom ornament used to frame Blossom & Oud sections */
+  function floralCornerSVG(cls){
+    return `<svg class="floral-corner ${cls}" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 4 C 20 6, 30 16, 32 32 C 34 48, 44 58, 60 60" stroke="#e8c877" stroke-width="1.1" opacity="0.85"/>
+      <path d="M4 4 C 10 18, 8 30, 16 40" stroke="#e8c877" stroke-width="1" opacity="0.6"/>
+      <circle cx="14" cy="12" r="6.5" fill="#c94b6b" opacity="0.9"/>
+      <circle cx="24" cy="8" r="4.5" fill="#e8c877" opacity="0.85"/>
+      <circle cx="8" cy="24" r="4" fill="#f2b6c6" opacity="0.85"/>
+      <circle cx="30" cy="22" r="3.5" fill="#c94b6b" opacity="0.7"/>
+      <path d="M18 16 q6 -8 14 -4" stroke="#7a9a63" stroke-width="1.4" opacity="0.7" fill="none"/>
+      <path d="M10 30 q4 6 12 6" stroke="#7a9a63" stroke-width="1.4" opacity="0.6" fill="none"/>
+      <circle cx="40" cy="40" r="2" fill="#e8c877" opacity="0.6"/>
+      <circle cx="50" cy="52" r="1.6" fill="#e8c877" opacity="0.5"/>
+    </svg>`;
+  }
+  const RING_ICON_SVG = `<svg class="ring-icon" width="34" height="24" viewBox="0 0 34 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="14" r="8.5" stroke="currentColor" stroke-width="1.4"/>
+    <circle cx="22" cy="14" r="8.5" stroke="currentColor" stroke-width="1.4"/>
+  </svg>`;
+
+  /* ===================== BUILD SECTIONS ===================== */
+  function buildSectionsHTML(s){
+    const t = T[s.lang] || T.ar;
+    const isWedding = s.eventType !== 'engagement';
+    const title = isWedding ? t.weddingTitle : t.engagementTitle;
+    const brideInit = ((s.brideLatin||'?')[0]||'?').toUpperCase();
+    const groomInit = ((s.groomLatin||'?')[0]||'?').toUpperCase();
+    const targetDate = mainTargetDate(s);
+    const venueDateStr = fmtDate(targetDate, s.lang);
+
+    /* --- Cover --- */
+    const coverHTML = `
+      <section class="cover-sec" id="coverSec">
+        <div class="petals-layer" id="petalsLayer"></div>
+        <div class="cover-frame"></div>
+        <div class="cover-eyebrow">${t.coverEyebrow}</div>
+        <div class="seal-big">${brideInit}&amp;${groomInit}</div>
+        <div class="cover-hint">${t.tapToOpen}</div>
+        <div class="particles-layer" id="particlesLayer"></div>
+      </section>`;
+
+    /* --- Hero --- */
+    const countdownHTML = (s.toggles.countdown && targetDate) ? `
+      <div class="ic-count" data-countdown="${esc(targetDate)}">
+        <div class="cbox"><span class="cnum" data-cd="d">00</span><span class="clabel">${t.days}</span></div>
+        <div class="cbox"><span class="cnum" data-cd="h">00</span><span class="clabel">${t.hours}</span></div>
+        <div class="cbox"><span class="cnum" data-cd="m">00</span><span class="clabel">${t.minutes}</span></div>
+        <div class="cbox"><span class="cnum" data-cd="s">00</span><span class="clabel">${t.seconds}</span></div>
+      </div>` : '';
+
+    const photoHTML = s.coupleImage ? `
+      <div class="couple-photo">
+        <img src="${esc(s.coupleImage)}" alt="" loading="lazy" onerror="this.parentElement.style.display='none'">
+      </div>` : '';
+
+    const heroHTML = `
+      <section class="hero-sec reveal">
+        ${floralCornerSVG('fc-tl')}${floralCornerSVG('fc-tr')}
+        ${photoHTML}
+        <div class="hero-eyebrow">${t.weddingEyebrow}</div>
+        <div class="hero-names">${esc(s.brideLatin)||'—'}<span class="hn-amp">${t.and}</span>${esc(s.groomLatin)||'—'}</div>
+        ${(s.brideAr || s.groomAr) ? `<div class="hero-names-ar">${esc(s.brideAr)} ${esc(s.groomAr)? (s.lang==='ar'?' و ':' & '):''} ${esc(s.groomAr)}</div>` : ''}
+        <div class="flourish"></div>
+        ${venueDateStr ? `<div class="hero-date">${venueDateStr}</div>` : ''}
+        ${(s.venue||s.city) ? `<div class="hero-venue">${esc(s.venue)}${s.venue&&s.city?' — ':''}${esc(s.city)}</div>` : ''}
+        ${countdownHTML}
+        <div class="scroll-cue">↓</div>
+      </section>`;
+
+    /* --- Formal wording --- */
+    const formalHTML = `
+      <section class="formal-sec reveal">
+        ${floralCornerSVG('fc-tl')}${floralCornerSVG('fc-tr')}
+        <div class="formal-frame">
+          ${(s.lang === 'ar' && t.bismillah) ? `<div class="bismillah">${t.bismillah}</div>` : ''}
+          <div class="formal-eyebrow">${title}</div>
+          <p class="formal-text">${esc(t.formalIntro(s))}</p>
+        </div>
+      </section>`;
+
+    /* --- Schedule --- */
+    const scheduleRows = [
+      [t.ceremony, s.ceremony], [t.reception, s.reception], [t.dinner, s.dinner], [t.party, s.party]
+    ].filter(r => r[1]);
+    const scheduleHTML = (s.toggles.schedule && scheduleRows.length) ? `
+      <section class="schedule-sec reveal">
+        <div class="schedule-title">${t.scheduleTitle}</div>
+        <div class="schedule-list">
+          ${scheduleRows.map(r => `<div class="sched-row"><span class="lbl">${r[0]}</span><span class="val">${fmtDate(r[1], s.lang)}</span></div>`).join('')}
+        </div>
+      </section>` : '';
+
+    /* --- Location --- */
+    const locationHTML = (s.toggles.map && (s.venue || s.mapUrl)) ? `
+      <section class="location-sec reveal">
+        ${floralCornerSVG('fc-tl')}${floralCornerSVG('fc-tr')}
+        <div class="pin"></div>
+        ${RING_ICON_SVG}
+        <div class="location-title">${t.locationTitle}</div>
+        <div class="location-venue">${esc(s.venue)||''}</div>
+        ${s.city ? `<div class="location-city">${esc(s.city)}</div>` : ''}
+        ${s.mapUrl ? `<a class="ic-btn solid" target="_blank" rel="noopener" href="${esc(s.mapUrl)}">${t.directionsBtn}</a>` : ''}
+      </section>` : '';
+
+    /* --- Dress code --- */
+    const dressHTML = (s.toggles.dressCode && s.dressCode) ? `
+      <section class="dress-sec reveal">
+        <div class="dress-title">${t.dressTitle}</div>
+        <p class="dress-text">${esc(s.dressCode)}</p>
+      </section>` : '';
+
+    /* --- RSVP --- */
+    const rsvpHTML = (s.toggles.rsvp) ? `
+      <section class="rsvp-sec reveal">
+        <div class="rsvp-title">${t.rsvpTitle}</div>
+        <form class="rsvp-form" id="rsvpForm" data-phone="${esc(s.rsvpPhone)}" data-event="${esc(title)}" data-msgprefix="${esc(t.rsvpMsgPrefix)}">
+          <input type="text" name="rsvpName" placeholder="${t.rsvpNameLbl}" required>
+          <input type="number" name="rsvpGuests" placeholder="${t.rsvpGuestsLbl}" min="1" value="1">
+          <div class="rsvp-attend">
+            <label><input type="radio" name="rsvpAttend" value="yes" checked><span>${t.rsvpYes}</span></label>
+            <label><input type="radio" name="rsvpAttend" value="no"><span>${t.rsvpNo}</span></label>
+          </div>
+          <button type="submit" class="ic-btn solid rsvp-submit">${t.rsvpSubmit}</button>
+          <div class="rsvp-thanks" id="rsvpThanks">${t.rsvpThanks}</div>
+        </form>
+      </section>` : '';
+
+    /* --- Closing --- */
+    const closingHTML = `
+      <section class="closing-sec reveal">
+        <div class="closing-mark"></div>
+        <div class="closing-text">${t.closingText}</div>
+        <div class="closing-sub">${t.closingSub}</div>
+      </section>`;
+
+    const tplClass = s.template === 'viktor' ? 'tpl-viktor' : 'tpl-blossom';
+    return `
+      <div class="invite-scroll ${tplClass}" id="inviteScroll" dir="${t.dir}">
+        ${coverHTML}
+        <div class="pages">
+          ${heroHTML}${formalHTML}${scheduleHTML}${locationHTML}${dressHTML}${rsvpHTML}${closingHTML}
+        </div>
+      </div>`;
+  }
+
+  let revealObserver = null;
+  function renderStage(container, s, keepOpen){
+    container.innerHTML = buildSectionsHTML(s);
+    const scrollEl = container.querySelector('#inviteScroll');
+    const cover = container.querySelector('#coverSec');
+
+    function openInvitation(){
+      if(scrollEl.classList.contains('opened')) return;
+      cover.classList.add('breaking');
+      burstParticles(container.querySelector('#particlesLayer'));
+      setTimeout(() => {
+        scrollEl.classList.add('opened');
+        requestAnimationFrame(() => {
+          scrollEl.scrollTo({ top: cover.offsetHeight, behavior:'smooth' });
+        });
+      }, 480);
+    }
+    cover.addEventListener('click', openInvitation);
+    if(keepOpen){
+      scrollEl.classList.add('opened');
+      cover.classList.add('breaking');
+      scrollEl.scrollTop = cover.offsetHeight;
+    }
+
+    spawnPetals(container.querySelector('#petalsLayer'));
+
+    if(revealObserver) revealObserver.disconnect();
+    const revealTargets = container.querySelectorAll('.reveal');
+    if('IntersectionObserver' in window){
+      revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('revealed'); });
+      }, { root: scrollEl, threshold: 0.18 });
+      revealTargets.forEach(t => revealObserver.observe(t));
+    } else {
+      revealTargets.forEach(t => t.classList.add('revealed'));
+    }
+
+    bindRsvpForm(container, s);
+    startCountdowns(container, s.lang);
+  }
+
+  function spawnPetals(layer){
+    if(!layer) return;
+    const n = 14;
+    for(let i=0;i<n;i++){
+      const p = document.createElement('span');
+      p.className = 'petal';
+      p.style.left = (Math.random()*100) + '%';
+      p.style.setProperty('--drift', (Math.random()*60 - 30) + 'px');
+      p.style.animationDuration = (7 + Math.random()*6) + 's';
+      p.style.animationDelay = (Math.random()*8) + 's';
+      p.style.transform = 'scale(' + (0.7 + Math.random()*0.8) + ')';
+      layer.appendChild(p);
+    }
+  }
+
+  function burstParticles(layer){
+    if(!layer) return;
+    const n = 18;
+    for(let i=0;i<n;i++){
+      const p = document.createElement('span');
+      p.className = 'particle';
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 60 + Math.random()*70;
+      p.style.setProperty('--dx', Math.cos(angle)*dist + 'px');
+      p.style.setProperty('--dy', Math.sin(angle)*dist - 40 + 'px');
+      p.style.left = '50%'; p.style.top = '38%';
+      p.style.animationDelay = (Math.random()*0.15) + 's';
+      layer.appendChild(p);
+      setTimeout(() => p.remove(), 1600);
+    }
+  }
+
+  /* ===================== RSVP FORM ===================== */
+  function bindRsvpForm(scope, s){
+    const form = scope.querySelector('#rsvpForm');
+    if(!form) return;
+    form.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      const name = form.rsvpName.value.trim();
+      if(!name) return;
+      const guests = form.rsvpGuests.value || '1';
+      const attend = form.rsvpAttend.value;
+      const phone = form.getAttribute('data-phone');
+      const eventName = form.getAttribute('data-event');
+      const prefix = form.getAttribute('data-msgprefix');
+      const t = T[s.lang] || T.ar;
+
+      if(phone){
+        const attendLabel = attend === 'yes' ? t.rsvpYes : t.rsvpNo;
+        const msg = encodeURIComponent(`${prefix} ${eventName} — ${name} (${guests}) — ${attendLabel}`);
+        window.open(`https://wa.me/${phone.replace(/[^0-9]/g,'')}?text=${msg}`, '_blank');
+      }
+      const thanks = scope.querySelector('#rsvpThanks');
+      if(thanks) thanks.classList.add('show');
+      form.querySelector('.rsvp-submit').setAttribute('disabled', 'true');
+    });
+  }
+
+  /* ===================== COUNTDOWN ===================== */
+  let countdownTimers = [];
+  function startCountdowns(scope){
+    countdownTimers.forEach(id => clearInterval(id));
+    countdownTimers = [];
+    const boxes = scope.querySelectorAll('[data-countdown]');
+    boxes.forEach(box => {
+      const target = new Date(box.getAttribute('data-countdown'));
+      function tick(){
+        const now = new Date();
+        let diff = Math.max(0, target - now);
+        const d = Math.floor(diff / 86400000); diff -= d*86400000;
+        const h = Math.floor(diff / 3600000); diff -= h*3600000;
+        const m = Math.floor(diff / 60000); diff -= m*60000;
+        const sec = Math.floor(diff / 1000);
+        const set = (k,v) => { const n = box.querySelector('[data-cd="'+k+'"]'); if(n) n.textContent = String(v).padStart(2,'0'); };
+        set('d', d); set('h', h); set('m', m); set('s', sec);
+      }
+      tick();
+      const id = setInterval(tick, 1000);
+      countdownTimers.push(id);
+    });
+  }
+
+  /* ===================== FORM <-> STATE ===================== */
+  function collectState(){
+    return {
+      template: document.querySelector('.template-card.active').getAttribute('data-template'),
+      eventType: document.querySelector('#eventTypeGroup .pill.active').getAttribute('data-event'),
+      lang: document.querySelector('#inviteLangGroup .pill.active').getAttribute('data-lang'),
+      brideLatin: el('brideLatin').value.trim(),
+      brideAr: el('brideAr').value.trim(),
+      groomLatin: el('groomLatin').value.trim(),
+      groomAr: el('groomAr').value.trim(),
+      coupleImage: el('coupleImage').value.trim(),
+      venue: el('venue').value.trim(),
+      city: el('city').value.trim(),
+      ceremony: el('ceremony').value,
+      reception: el('reception').value,
+      dinner: el('dinner').value,
+      party: el('party').value,
+      mapUrl: el('mapUrl').value.trim(),
+      dressCode: el('dressCode').value.trim(),
+      rsvpPhone: el('rsvpPhone').value.trim(),
+      toggles:{
+        countdown: el('toggleCountdown').checked,
+        schedule: el('toggleSchedule').checked,
+        dressCode: el('toggleDress').checked,
+        rsvp: el('toggleRsvp').checked,
+        map: el('toggleMap').checked
+      }
+    };
+  }
+
+  function refreshPreview(){
+    state = collectState();
+    const stage = el('previewStage');
+    const wasOpen = !!stage.querySelector('.invite-scroll.opened');
+    renderStage(stage, state, wasOpen);
+  }
+
+  /* ===================== VALIDATION ===================== */
+  function validate(s){
+    let ok = true;
+    const showErr = (id, show) => { const e = el(id); if(e) e.classList.toggle('show', show); };
+    const nameOk = !!(s.brideLatin && s.groomLatin);
+    showErr('err-names', !nameOk); if(!nameOk) ok = false;
+    const venueOk = !!s.venue;
+    showErr('err-venue', !venueOk); if(!venueOk) ok = false;
+    const dateOk = !!(s.ceremony || s.reception || s.dinner || s.party);
+    showErr('err-date', !dateOk); if(!dateOk) ok = false;
+    [['brideLatin',s.brideLatin],['groomLatin',s.groomLatin],['venue',s.venue]].forEach(([id,val])=>{
+      el(id).classList.toggle('invalid', !val);
+    });
+    return ok;
+  }
+
+  /* ===================== ENCODE / DECODE ===================== */
+  function encodeState(s){ return btoa(unescape(encodeURIComponent(JSON.stringify(s)))); }
+  function decodeState(str){ return JSON.parse(decodeURIComponent(escape(atob(str)))); }
+
+  /* ===================== UI WIRING ===================== */
+  function setActive(groupSelector, target){
+    document.querySelectorAll(groupSelector).forEach(b => b.classList.remove('active'));
+    target.classList.add('active');
+  }
+
+  function applyUILang(lang){
+    uiLang = lang;
+    const dict = UI[lang];
+    document.querySelectorAll('[data-i18n]').forEach(node => {
+      const key = node.getAttribute('data-i18n');
+      if(dict[key] !== undefined) node.innerHTML = dict[key];
+    });
+    document.querySelectorAll('.lang-switch button').forEach(b => b.classList.toggle('active', b.getAttribute('data-uilang') === lang));
+    document.body.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    document.body.style.fontFamily = lang === 'ar' ? "var(--font-ar-body)" : "var(--font-ui)";
+  }
+
+  function initBuilder(){
+    document.querySelectorAll('.template-card').forEach(card => {
+      card.addEventListener('click', () => { setActive('.template-card', card); refreshPreview(); });
+    });
+    document.querySelectorAll('#eventTypeGroup .pill').forEach(p => {
+      p.addEventListener('click', () => { setActive('#eventTypeGroup .pill', p); refreshPreview(); });
+    });
+    document.querySelectorAll('#inviteLangGroup .pill').forEach(p => {
+      p.addEventListener('click', () => { setActive('#inviteLangGroup .pill', p); refreshPreview(); });
+    });
+    document.querySelectorAll('.lang-switch button').forEach(b => {
+      b.addEventListener('click', () => applyUILang(b.getAttribute('data-uilang')));
+    });
+    ['brideLatin','brideAr','groomLatin','groomAr','coupleImage','venue','city','ceremony','reception','dinner','party',
+     'mapUrl','dressCode','rsvpPhone'].forEach(id => { el(id).addEventListener('input', refreshPreview); });
+    ['toggleCountdown','toggleSchedule','toggleDress','toggleRsvp','toggleMap'].forEach(id => {
+      el(id).addEventListener('change', refreshPreview);
+    });
+
+    el('builderForm').addEventListener('submit', function(ev){
+      ev.preventDefault();
+      const s = collectState();
+      if(!validate(s)) return;
+      startChargilyCheckout(s);
+    });
+
+    el('copyLinkBtn').addEventListener('click', function(){
+      const input = el('shareLink');
+      input.select(); input.setSelectionRange(0, 99999);
+      navigator.clipboard && navigator.clipboard.writeText(input.value).catch(()=>{ document.execCommand('copy'); });
+      const original = this.textContent;
+      this.textContent = UI[uiLang].copiedMsg;
+      setTimeout(() => { this.textContent = original; }, 1600);
+    });
+
+    refreshPreview();
+  }
+
+  /* ===================== CHARGILY PAY — real API-key checkout (Test mode) ===================== */
+  // The Chargily SECRET key must never live in this file — anything shipped to the browser
+  // can be read via "view source". It stays server-side inside the two small serverless
+  // functions in /api (api/create-checkout.js and api/verify-checkout.js), which this page
+  // calls over the network. Deploy those two files (e.g. on Vercel's free tier — no server
+  // to run or maintain) alongside this index.html. See README.md for the exact steps.
+  const PAY_AMOUNT_DZD = 500;
+
+  function setPayError(msg){
+    const box = el('payError');
+    if(!msg){ box.classList.remove('show'); box.textContent=''; return; }
+    box.textContent = msg;
+    box.classList.add('show');
+  }
+
+  async function startChargilyCheckout(s){
+    setPayError(null);
+    const btn = el('generateBtn');
+    btn.setAttribute('disabled', 'true');
+    const originalLabel = btn.textContent;
+    btn.textContent = UI[uiLang].payRedirecting;
+
+    const encoded = encodeState(s);
+    const successUrl = location.origin + location.pathname + '?paid=1&i=' + encoded;
+    const failureUrl = location.origin + location.pathname + '?paid=0';
+
+    try{
+      const res = await fetch('/api/create-checkout', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({
+          amount: PAY_AMOUNT_DZD,
+          currency: 'dzd',
+          success_url: successUrl,
+          failure_url: failureUrl,
+          locale: s.lang || 'ar',
+          description: 'Atelier Dawat — ' + (s.brideLatin||'') + ' & ' + (s.groomLatin||'')
+        })
+      });
+      if(!res.ok) throw new Error('http_' + res.status);
+      const data = await res.json();
+      if(!data.checkout_url || !data.id) throw new Error('bad_response');
+
+      // Keep the checkout id so we can verify payment status server-side on return.
+      sessionStorage.setItem('chargilyCheckoutId', data.id);
+      location.href = data.checkout_url;
+    }catch(err){
+      setPayError(UI[uiLang].payFailedCreate);
+      btn.removeAttribute('disabled');
+      btn.textContent = originalLabel;
+    }
+  }
+
+  async function verifyPaymentAndReveal(encodedState){
+    const overlay = el('payOverlay');
+    overlay.classList.add('show');
+
+    const checkoutId = sessionStorage.getItem('chargilyCheckoutId');
+    if(!checkoutId){
+      overlay.classList.remove('show');
+      history.replaceState(null, '', location.pathname);
+      applyUILang('ar'); initBuilder();
+      setPayError(UI['ar'].payFailedVerify);
+      return;
+    }
+
+    try{
+      const res = await fetch('/api/verify-checkout?id=' + encodeURIComponent(checkoutId));
+      if(!res.ok) throw new Error('http_' + res.status);
+      const data = await res.json();
+      overlay.classList.remove('show');
+      sessionStorage.removeItem('chargilyCheckoutId');
+
+      if(data.status === 'paid'){
+        // Payment confirmed server-side — clean the URL to the final shareable link and reveal it.
+        const cleanUrl = location.origin + location.pathname + '?i=' + encodedState;
+        history.replaceState(null, '', cleanUrl);
+        const s = decodeState(encodedState);
+        initInviteView(Object.assign(defaultState(), s));
+      } else {
+        history.replaceState(null, '', location.pathname);
+        applyUILang('ar'); initBuilder();
+        setPayError(UI['ar'].payNotPaid);
+      }
+    }catch(err){
+      overlay.classList.remove('show');
+      history.replaceState(null, '', location.pathname);
+      applyUILang('ar'); initBuilder();
+      setPayError(UI['ar'].payFailedVerify);
+    }
+  }
+
+  /* ===================== FULL INVITATION MODE ===================== */
+  function initInviteView(s){
+    document.getElementById('builderView').style.display = 'none';
+    document.getElementById('inviteView').style.display = 'block';
+    document.title = (s.brideLatin || '') + ' & ' + (s.groomLatin || '') + ' — Invitation';
+    const t = T[s.lang] || T.ar;
+    document.body.setAttribute('dir', t.dir);
+    document.body.style.fontFamily = s.lang === 'ar' ? "var(--font-ar-body)" : "var(--font-ui)";
+    document.getElementById('backToBuilder').textContent = UI[s.lang==='ar'?'ar':(s.lang==='fr'?'fr':'en')].backBtn;
+    renderStage(el('fullStage'), s, false);
+    el('backToBuilder').addEventListener('click', function(){
+      history.replaceState(null, '', location.pathname);
+      location.reload();
+    });
+  }
+
+  /* ===================== BOOT ===================== */
+  function boot(){
+    const params = new URLSearchParams(location.search);
+
+    if(params.get('paid') === '1' && params.has('i')){
+      applyUILang('ar');
+      document.getElementById('builderView').style.display = 'none';
+      verifyPaymentAndReveal(params.get('i'));
+      return;
+    }
+    if(params.get('paid') === '0'){
+      history.replaceState(null, '', location.pathname);
+      applyUILang('ar');
+      initBuilder();
+      setPayError(UI['ar'].payNotPaid);
+      return;
+    }
+
+    if(params.has('i')){
+      try{
+        const s = decodeState(params.get('i'));
+        initInviteView(Object.assign(defaultState(), s));
+        return;
+      }catch(e){ /* fall through to builder on bad payload */ }
+    }
+    applyUILang('ar');
+    initBuilder();
+  }
+
+  document.addEventListener('DOMContentLoaded', boot);
+})();
+</script>
+</body>
+</html>
