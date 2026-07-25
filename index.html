@@ -1258,7 +1258,11 @@
       try{ data = await res.json(); }catch(parseErr){ /* non-JSON response */ }
 
       if(!res.ok){
-        const detail = data ? (data.message || data.error || JSON.stringify(data.details || data)) : ('HTTP ' + res.status);
+        let detail = 'HTTP ' + res.status;
+        if(data){
+          const chargilyMsg = data.details && (data.details.message || (Array.isArray(data.details.errors) ? JSON.stringify(data.details.errors) : null));
+          detail = chargilyMsg || data.message || (data.error ? (data.error + ': ' + JSON.stringify(data.details || {})) : JSON.stringify(data));
+        }
         throw new Error(detail);
       }
       if(!data || !data.checkout_url || !data.id) throw new Error('bad_response: ' + JSON.stringify(data));
